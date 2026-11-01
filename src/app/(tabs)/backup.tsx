@@ -4,7 +4,8 @@ import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { backupCsv, backupJson, draftsToFics, parseImportFile, planRestore, planSheetImport } from '@/lib/backup';
 import { plural, today, type Fic } from '@/lib/fic';
-import { pickFile, shareTextFile } from '@/lib/files';
+import { pickFile, shareAssetFile, shareTextFile } from '@/lib/files';
+import template from '../../../assets/templates/my-fic-archive-template.xlsx';
 import type { FicDraft } from '@/lib/importers/rows';
 import { useFeedback } from '@/state/feedback';
 import { useLibrary } from '@/state/library';
@@ -89,6 +90,15 @@ export default function Backup() {
     }
   };
 
+  const getTemplate = async () => {
+    try {
+      await shareAssetFile(template, 'my-fic-archive-template.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    } catch (e) {
+      console.error(e);
+      toast(e instanceof Error ? e.message : "Couldn't open the template");
+    }
+  };
+
   const exportAs = async (kind: 'json' | 'csv') => {
     try {
       const name = `fic-archive-${today()}.${kind}`;
@@ -110,9 +120,10 @@ export default function Backup() {
         <View style={{ paddingHorizontal: 16, gap: 16 }}>
           <Section title="Import a spreadsheet">
             <Txt size={14} color={t.ink2} style={{ marginBottom: 12 }}>
-              .xlsx or .csv with columns <Txt v="heavy" size={14} color={t.ink2}>author, title, word count, summary</Txt>. Title hyperlinks become file links, light-blue rows become “Ongoing”, and everything starts as “Want to Read”.
+              .xlsx or .csv. Only <Txt v="heavy" size={14} color={t.ink2}>title</Txt> and <Txt v="heavy" size={14} color={t.ink2}>author</Txt> columns are needed; status, rating, favorite, tags, links, summary, thoughts and dates come in too when the sheet has them. Fics already in your library are skipped.
             </Txt>
             <Pill kind="pink" icon="plus" label="Choose spreadsheet" block onPress={choose} />
+            <Pill icon="download" label="Get the Excel template" block onPress={getTemplate} style={{ marginTop: 10 }} />
           </Section>
 
           <Section title="Back up my library">

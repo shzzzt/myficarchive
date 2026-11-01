@@ -2,7 +2,7 @@ import Svg, { Circle, Path } from 'react-native-svg';
 
 export type IconName =
   | 'search' | 'x' | 'plus' | 'heart' | 'filter' | 'sort' | 'book' | 'user' | 'chart' | 'box'
-  | 'back' | 'next' | 'edit' | 'trash' | 'open' | 'sun' | 'moon' | 'auto' | 'check' | 'list' | 'upload';
+  | 'back' | 'next' | 'edit' | 'trash' | 'open' | 'sun' | 'moon' | 'auto' | 'check' | 'list' | 'upload' | 'download';
 
 export function Icon({ name, size = 22, color, fill = 'none' }: { name: IconName; size?: number; color: string; fill?: string }) {
   const s = { stroke: color, strokeWidth: 2, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const, fill: 'none' };
@@ -22,6 +22,7 @@ export function Icon({ name, size = 22, color, fill = 'none' }: { name: IconName
     case 'next': body = <Path d="M9.5 6l6 6-6 6" {...s} strokeWidth={2.4} />; break;
     case 'list': body = <Path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01" {...s} strokeWidth={2.4} />; break;
     case 'upload': body = <Path d="M12 16V4M7 9l5-5 5 5M5 20h14" {...s} strokeWidth={2.2} />; break;
+    case 'download': body = <Path d="M12 4v12M7 11l5 5 5-5M5 20h14" {...s} strokeWidth={2.2} />; break;
     case 'edit': body = <Path d="M4 20h4L19 9l-4-4L4 16z" {...s} />; break;
     case 'trash': body = <Path d="M5 7h14M10 7V5h4v2M7 7l1 13h8l1-13" {...s} />; break;
     case 'open': body = <Path d="M14 4h6v6M20 4l-9 9M18 14v5H5V6h5" {...s} strokeWidth={2.2} />; break;

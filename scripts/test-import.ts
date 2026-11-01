@@ -45,4 +45,43 @@ assert.equal(parseWords('22,000 words'), 22000);
 assert.equal(fmtWords('1.2m'), '1.2M');
 assert.equal(fmtWords('52000'), '52k');
 
-console.log(`ok: ${parsed.drafts.length} fics parsed, backups round-trip`);
+// The import template (scripts/make-template.py): every column maps to a fic field, the guide tab is ignored.
+const read = (f: string) => new Uint8Array(readFileSync(join(__dirname, '..', f)));
+const empty = parseImportFile('t.xlsx', read('assets/templates/my-fic-archive-template.xlsx'));
+assert.equal(empty.kind, 'sheet');
+if (empty.kind === 'sheet') assert.equal(empty.drafts.length, 0, 'empty template imports nothing');
+
+const filled = parseImportFile('t.xlsx', read('scripts/fixtures/template-filled.xlsx'));
+if (filled.kind !== 'sheet') throw new Error('template should parse as a sheet');
+assert.equal(filled.skipped, 0);
+const [eu, moon, bare] = draftsToFics(filled.drafts);
+assert.deepEqual(filled.drafts.map((d) => d.title), ['Euphoria', 'Moonlit Hours', 'Just a title']);
+assert.equal(eu.author, 'peachyjams');
+assert.equal(eu.words, '31k');
+assert.equal(eu.status, 'finished');
+assert.equal(eu.rating, 4.5);
+assert.equal(eu.favorite, true);
+assert.deepEqual(eu.tags, ['angst', 'soulmate au']);
+assert.deepEqual(eu.links, [{ type: 'File', url: 'https://drive.google.com/file/d/xyz/view' }], 'title hyperlink');
+assert.equal(eu.ao3, 'https://archiveofourown.org/works/111');
+assert.equal(eu.summary, 'Jimin moves in next door.\nJungkook is not okay.');
+assert.equal(eu.thoughts, 'cried twice ♡');
+assert.equal(eu.startedAt, '2026-08-30', 'excel date serial');
+assert.equal(eu.finishedAt, '2026-09-12');
+assert.equal(eu.ficStatus, 'Completed');
+assert.equal(moon.ficStatus, 'Ongoing');
+assert.equal(moon.status, 'reading');
+assert.equal(moon.rating, 3.5, 'star characters');
+assert.equal(moon.favorite, false);
+assert.equal(moon.words, '180000');
+assert.deepEqual(moon.tags, ['slow burn', 'fluff']);
+assert.deepEqual(moon.links, [
+  { type: 'EPUB', url: 'https://drive.google.com/file/d/epub1' },
+  { type: 'PDF', url: 'https://drive.google.com/file/d/pdf1' },
+]);
+assert.equal(moon.startedAt, '2026-10-02', 'typed text date');
+assert.equal(bare.status, 'want', 'no status -> Want to Read');
+assert.equal(bare.rating, 0);
+assert.equal(bare.ficStatus, 'Completed', 'no Fic status, no fill -> Completed');
+
+console.log(`ok: ${parsed.drafts.length} fics parsed, template maps every column, backups round-trip`);

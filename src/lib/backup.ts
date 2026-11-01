@@ -1,7 +1,7 @@
 /* Backup formats (JSON + CSV) and turning imported files into fics. Pure: no React Native imports. */
 import { dupKey, normalizeFic, statusLabel, type Fic, type FicInput } from './fic';
 import { parseCsv, toCsv } from './importers/csv';
-import { rowsToFics, type FicDraft, type SheetRow } from './importers/rows';
+import { isGuideSheet, rowsToFics, type FicDraft, type SheetRow } from './importers/rows';
 import { parseXlsx } from './importers/xlsx';
 import { strFromU8 } from 'fflate';
 
@@ -50,7 +50,9 @@ export function parseImportFile(name: string, bytes: Uint8Array): ParsedFile {
   const lower = name.toLowerCase();
   const asText = () => strFromU8(bytes);
   if (lower.endsWith('.xlsx') || lower.endsWith('.xlsm')) {
-    const sheets = parseXlsx(bytes);
+    const all = parseXlsx(bytes);
+    const lists = all.filter((s) => !isGuideSheet(s.name));
+    const sheets = lists.length ? lists : all;
     // Each sheet may have its own header row, so map them separately.
     const parsed = sheets.map((s) => rowsToFics(s.rows));
     return { kind: 'sheet', drafts: parsed.flatMap((p) => p.fics), skipped: parsed.reduce((s, p) => s + p.skipped, 0), sheets: sheets.length };
@@ -90,7 +92,8 @@ export function planSheetImport(drafts: FicDraft[], existing: Fic[]) {
 export function draftsToFics(fresh: FicDraft[]): Fic[] {
   const base = Date.now();
   // Stagger timestamps so the default "newest first" sort shows the sheet's top row first.
-  return fresh.map((d, i) => normalizeFic({ ...d, status: 'want', addedAt: new Date(base - i).toISOString() }, false));
+  // Sheets without a reading-status column start everything as Want to Read.
+  return fresh.map((d, i) => normalizeFic({ ...d, status: d.status || 'want', addedAt: new Date(base - i).toISOString() }, false));
 }
 
 export function planRestore(backup: Fic[], current: Fic[]) {

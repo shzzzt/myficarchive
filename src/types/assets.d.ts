@@ -3,3 +3,7 @@ declare module '*.txt' {
   const id: number;
   export default id;
 }
+declare module '*.xlsx' {
+  const id: number;
+  export default id;
+}

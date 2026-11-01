@@ -67,9 +67,17 @@ On a fic's page, **Upload EPUB or PDF to read here** copies the file into the ap
 
 ## Spreadsheet import rules
 
-- Columns are found by header text (author, title, word count, summary, optional link);
-  with no header row, A = author, B = title, C = words, D = summary.
+- **Template:** Backup tab → **Get the Excel template**, or `assets/templates/my-fic-archive-template.xlsx`.
+  It has dropdowns for fic status, reading status, rating and favorite, date checks, header tips
+  and a "How to use" tab. Regenerate it with `python scripts/make-template.py` (needs openpyxl).
+- Columns are found by header text, in any order: Title, Author (both required), Words, Fic status,
+  Reading status, My rating, Favorite, Tags, EPUB link, PDF link, AO3 link, Summary, My thoughts,
+  Started, Finished. Common variants work too (e.g. "Writer", "Stars", "Notes", "Date finished").
+  With no header row, A = author, B = title, C = words, D = summary.
+- Tabs named like "How to use", "Guide" or "Instructions" are ignored.
+- Ratings can be 4.5, 4,5 or ★★★★½; dates can be Excel dates or typed like 2026-09-12; tags are
+  separated by commas or semicolons; Favorite accepts Yes / ✓ / ♥.
 - A hyperlink on the title cell (or a `HYPERLINK()` formula) becomes the file link.
-- Rows with a light-blue fill import as **Ongoing**.
+- With no Fic status column, rows with a light-blue fill import as **Ongoing**.
 - Blank, header and note rows are skipped, and so are fics already in the library (same title + author).
-- New fics start as *Want to Read*.
+- Fics without a reading status start as *Want to Read*.
