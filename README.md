@@ -36,7 +36,7 @@ npm test              # spreadsheet import, backup round-trip and EPUB parsing (
 - `src/lib/`: pure logic with no React Native imports: fic model, filters, backup formats,
   `importers/` (.xlsx reader with hyperlinks and fill colors, CSV)
 - `src/state/`: SQLite storage, library context, toasts/confirm, drafts (kv-store)
-- `src/ui/`: theme tokens (light/dark), shared components, sky/lace/cover art
+- `src/ui/`: theme tokens (light/dark, color palettes generated from three hues in `theme.tsx`), shared components, sky/lace/cover art
 
 ## Reading in the app
 

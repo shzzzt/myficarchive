@@ -3,12 +3,14 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { EMPTY_FILTERS, today, type Fic, type Filters, type SortKey } from '@/lib/fic';
 import { deleteBook } from '@/lib/books';
 import { DEFAULT_READER, type ReaderSettings } from '@/lib/reader-html';
-import type { ThemePref } from '@/ui/theme';
+import { DEFAULT_CUSTOM, type Hues, type PaletteKey, type ThemePref } from '@/ui/theme';
 import * as db from './db';
 import { clearProgress, getJSON, getTrash, setJSON, setTrash } from './kv';
 
 export interface UIPrefs {
   theme: ThemePref;
+  palette: PaletteKey;
+  customHues: Hues;
   q: string;
   sort: SortKey;
   dir: 'asc' | 'desc';
@@ -17,7 +19,7 @@ export interface UIPrefs {
   reader: ReaderSettings;
 }
 
-const DEFAULT_UI: UIPrefs = { theme: 'system', q: '', sort: 'added', dir: 'desc', f: EMPTY_FILTERS, lastBackup: null, reader: DEFAULT_READER };
+const DEFAULT_UI: UIPrefs = { theme: 'system', palette: 'candy', customHues: DEFAULT_CUSTOM, q: '', sort: 'added', dir: 'desc', f: EMPTY_FILTERS, lastBackup: null, reader: DEFAULT_READER };
 
 interface Library {
   ready: boolean;
@@ -41,7 +43,7 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const [ui, setUIState] = useState<UIPrefs>(() => {
     const saved = getJSON<Partial<UIPrefs>>('ui', {});
-    return { ...DEFAULT_UI, ...saved, f: { ...EMPTY_FILTERS, ...(saved.f || {}) }, reader: { ...DEFAULT_READER, ...(saved.reader || {}) } };
+    return { ...DEFAULT_UI, ...saved, f: { ...EMPTY_FILTERS, ...(saved.f || {}) }, reader: { ...DEFAULT_READER, ...(saved.reader || {}) }, customHues: { ...DEFAULT_CUSTOM, ...(saved.customHues || {}) } };
   });
   // Latest list for async actions, so they never work from a stale render.
   const ficsRef = useRef(fics);
