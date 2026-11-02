@@ -29,7 +29,7 @@ export default function RootLayout() {
 function Themed() {
   const { ui } = useLibrary();
   return (
-    <ThemeProvider pref={ui.theme}>
+    <ThemeProvider pref={ui.theme} palette={ui.palette} custom={ui.customHues}>
       <FeedbackProvider>
         <Shell />
       </FeedbackProvider>

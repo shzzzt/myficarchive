@@ -13,6 +13,7 @@ import { Segmented } from '@/ui/common';
 import { Lace, ScreenTitle, Sky } from '@/ui/decor';
 import { Badge, Card, Pill, Txt } from '@/ui/kit';
 import { Sheet } from '@/ui/Sheet';
+import { ThemePicker } from '@/ui/ThemePicker';
 import { TAB_BAR_HEIGHT, useTheme, type ThemePref } from '@/ui/theme';
 
 type SheetPlan = { drafts: FicDraft[]; fresh: FicDraft[]; dups: number; skipped: number; sheets: number };
@@ -149,6 +150,13 @@ export default function Backup() {
               options={[{ k: 'system', label: 'System' }, { k: 'light', label: 'Light' }, { k: 'dark', label: 'Dark' }]}
               value={lib.ui.theme}
               onChange={(k) => lib.setUI({ theme: k as ThemePref })}
+            />
+            <View style={{ height: 14 }} />
+            <ThemePicker
+              value={lib.ui.palette}
+              custom={lib.ui.customHues}
+              onChange={(palette) => lib.setUI({ palette })}
+              onCustom={(customHues) => lib.setUI({ customHues })}
             />
           </Section>
 
